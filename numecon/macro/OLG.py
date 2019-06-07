@@ -4,13 +4,10 @@ import numpy as np
 from scipy import optimize
 
 import matplotlib.pyplot as plt
-import seaborn as sns
-
-sns.set_style("whitegrid")
+plt.style.use('seaborn-whitegrid')
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
 import ipywidgets as widgets
-
 
 class OLGModel:
 
@@ -291,7 +288,6 @@ class OLGModel:
 # interactive plots #
 #####################
 
-
 def interactive_interest_rate_function():
 
     widgets.interact(
@@ -322,7 +318,6 @@ def interactive_interest_rate_function():
         ),
     )
 
-
 def interest_rate_function(alpha, rho, delta):
 
     # a. solve model
@@ -336,7 +331,6 @@ def interest_rate_function(alpha, rho, delta):
 
     # c. plot
     model.plot_interest_rate_function(ax)
-
 
 def interactive_saving_function():
 
@@ -360,7 +354,6 @@ def interactive_saving_function():
         ),
     )
 
-
 def saving_function(beta, sigma):
 
     # a. solve model
@@ -375,7 +368,6 @@ def saving_function(beta, sigma):
 
     # c. model
     model.plot_saving_function(ax)
-
 
 def interactive_transition_curve():
 
@@ -398,7 +390,6 @@ def interactive_transition_curve():
             continuous_update=False,
         ),
     )
-
 
 def transition_curve(sigma, rho):
 

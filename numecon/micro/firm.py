@@ -3,8 +3,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 class FirmClass1D:
+
     def __init__(self, **kwargs):
 
         # a. baseline setup
@@ -37,6 +37,7 @@ class FirmClass1D:
         else:
             raise ValueError("unknown technology")
 
+    
     ##########
     # choice #
     ##########
@@ -75,6 +76,7 @@ class FirmClass1D:
 
         ax.plot(self.l_ast, self.y_ast, **kwargs)
 
+    
     ##########
     # figure #
     ##########

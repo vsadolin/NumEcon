@@ -3,13 +3,10 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
-import seaborn as sns
-
-sns.set_style("whitegrid")
+plt.style.use('seaborn-whitegrid')
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
 import ipywidgets as widgets
-
 
 def solow_equation(k, alpha, delta, s):
 
@@ -17,7 +14,6 @@ def solow_equation(k, alpha, delta, s):
     depreciation = delta * k
     k_plus = k + saving - depreciation
     return k_plus, saving, depreciation
-
 
 def simulate_solow_model(k0, alpha, delta, s, T):
 
@@ -34,7 +30,6 @@ def simulate_solow_model(k0, alpha, delta, s, T):
         depreciation_path.append(depreciation)
 
     return k_path, saving_path, depreciation_path
-
 
 def simulate(k_max=10, T=150):
 
@@ -55,7 +50,6 @@ def simulate(k_max=10, T=150):
         T=widgets.fixed(T),
         k_max=widgets.fixed(k_max),
     )
-
 
 def simulate_(k0, alpha, delta, s, T, k_max):
 

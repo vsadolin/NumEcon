@@ -4,15 +4,14 @@ import numpy as np
 from scipy import optimize
 
 import matplotlib.pyplot as plt
-import seaborn as sns
-
-sns.set_style("whitegrid")
+plt.style.use('seaborn-whitegrid')
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
+
 import ipywidgets as widgets
 
-
 class ConsumerClass:
+
     def __init__(self, **kwargs):
 
         # a. baseline setup
@@ -68,6 +67,7 @@ class ConsumerClass:
 
         # b. utility function
         if self.preferences == "cobb_douglas":
+
             self.utility_func = lambda x1, x2, alpha, beta: x1 ** alpha * x2 ** beta
             self.indiff_func_x1 = lambda u0, x1, alpha, beta: (u0 / x1 ** alpha) ** (
                 1 / beta
@@ -75,7 +75,9 @@ class ConsumerClass:
             self.indiff_func_x2 = lambda u0, x2, alpha, beta: (u0 / x2 ** beta) ** (
                 1 / alpha
             )
+
         elif self.preferences == "ces":
+
             self.utility_func = (
                 lambda x1, x2, alpha, beta: (
                     alpha * x1 ** (-beta) + (1 - alpha) * x2 ** (-beta)
@@ -84,6 +86,7 @@ class ConsumerClass:
                 if beta != 0
                 else x1 ** alpha * x2 ** (1 - alpha)
             )
+
             self.indiff_func_x1 = (
                 lambda u0, x1, alpha, beta: (
                     (u0 ** (-beta) - alpha * x1 ** (-beta)) / (1 - alpha)
@@ -92,6 +95,7 @@ class ConsumerClass:
                 if beta != 0
                 else (u0 / x1 ** alpha) ** (1 / (1 - alpha))
             )
+
             self.indiff_func_x2 = (
                 lambda u0, x2, alpha, beta: (
                     (u0 ** (-beta) - (1 - alpha) * x2 ** (-beta)) / alpha
@@ -100,21 +104,28 @@ class ConsumerClass:
                 if beta != 0
                 else (u0 / x2 * (1 - alpha)) ** (1 / alpha)
             )
+
             self.indifference_curves_method = "numerical"
             self.utility_max_method = "numerical"
             self.cost_min_method = "numerical"
+
         elif self.preferences == "perfect_substitutes":
+
             self.utility_func = lambda x1, x2, alpha, beta: alpha * x1 + beta * x2
             self.indiff_func_x1 = lambda u0, x1, alpha, beta: (u0 - alpha * x1) / beta
             self.indiff_func_x2 = lambda u0, x2, alpha, beta: (u0 - beta * x2) / alpha
             self.cost_min_method = "numerical"
+
         elif self.preferences == "perfect_complements":
+
             self.utility_func = lambda x1, x2, alpha, beta: np.fmin(
                 alpha * x1, beta * x2
             )
             self.indifference_curves_method = self.preferences
             self.cost_min_method = "numerical"
+
         elif self.preferences == "quasi_log":
+
             self.utility_func = (
                 lambda x1, x2, alpha, beta: alpha * np.log(x1) + x2 * beta
             )
@@ -124,7 +135,9 @@ class ConsumerClass:
             self.indiff_func_x2 = lambda u0, x2, alpha, beta: np.exp(
                 (u0 - x2 * beta) / alpha
             )
+
         elif self.preferences == "quasi_sqrt":
+
             self.utility_func = (
                 lambda x1, x2, alpha, beta: alpha * np.sqrt(x1) + x2 * beta
             )
@@ -135,7 +148,9 @@ class ConsumerClass:
                 lambda u0, x2, alpha, beta: ((np.fmax(u0 - x2 * beta, 0)) / alpha) ** 2
             )
             self.cost_min_method = "numerical"
+
         elif self.preferences == "concave":
+
             self.utility_func = (
                 lambda x1, x2, alpha, beta: alpha * x1 ** 2 + beta * x2 ** 2
             )
@@ -146,7 +161,9 @@ class ConsumerClass:
                 (u0 - beta * x2 ** 2) / alpha
             )
             self.cost_min_method = "numerical"
+
         elif self.preferences == "quasi_quasi":
+
             self.utility_func = lambda x1, x2, alpha, beta: x1 ** alpha * (x2 + beta)
             self.indiff_func_x1 = lambda u0, x1, alpha, beta: u0 / x1 ** alpha - beta
             self.indiff_func_x2 = lambda u0, x2, alpha, beta: (u0 / (x2 + beta)) ** (
@@ -154,15 +171,17 @@ class ConsumerClass:
             )
             self.utility_max_method = "numerical"
             self.cost_min_method = "numerical"
+
         elif self.preferences == "saturated":
-            self.utility_func = lambda x1, x2, alpha, beta: -(
-                (x1 - alpha) ** 2 + (x2 - beta) ** 2
-            )
+
+            self.utility_func = lambda x1, x2, alpha, beta: -((x1 - alpha) ** 2 + (x2 - beta) ** 2)
             self.indifference_curves_method = self.preferences
             self.utility_max_method = "numerical"
             self.cost_min_method = "numerical"
             self.monotone = False
+
         else:
+            
             raise ValueError("unknown utility function")
 
         # b. figures
@@ -193,6 +212,7 @@ class ConsumerClass:
         frame = legend.get_frame()
         frame.set_facecolor("white")
 
+    
     ##########
     # choice #
     ##########
@@ -208,9 +228,7 @@ class ConsumerClass:
             setattr(self, key, val)
 
         # b. solve
-        if (self.utility_max_method == "numerical" and self.monotone == True) or (
-            numerical and monotone
-        ):
+        if (self.utility_max_method == "numerical" and self.monotone == True) or (numerical and monotone):
 
             # a. target
             def x2_func(x1):
@@ -232,9 +250,7 @@ class ConsumerClass:
             # a. target
             def target_2d(x):
                 excess_spending = self.p1 * x[0] + self.p2 * x[1] - self.I
-                return -self.utility(x[0], x[1]) + 1000 * np.max(
-                    [excess_spending, -x[0], -x[1], 0]
-                )
+                return -self.utility(x[0], x[1]) + 1000 * np.max([excess_spending, -x[0], -x[1], 0])
 
             # b. solve
             x0 = np.array([self.I / self.p1, self.I / self.p2]) / 2
@@ -280,6 +296,7 @@ class ConsumerClass:
                 self.x2_ast = 0
 
         else:
+
             raise ValueError("unknown solution method")
 
         # c. utility
@@ -352,6 +369,7 @@ class ConsumerClass:
         # d. return
         return np.array([self.h1_ast, self.h2_ast, self.h_cost])
 
+    
     #############
     # budgetset #
     #############
@@ -412,15 +430,14 @@ class ConsumerClass:
 
         ax.text(x, y, f"slope = -{self.p1/self.p2:.2f}", **kwargs)
 
-    def plot_endowment(
-        self, ax, scale_x=1.03, scale_y=1.03, text="endowment", **kwargs
-    ):
+    def plot_endowment(self, ax, scale_x=1.03, scale_y=1.03, text="endowment", **kwargs):
 
         kwargs.setdefault("color", "black")
 
         ax.scatter(self.e1, self.e2, **kwargs)
         ax.text(self.e1 * scale_x, self.e2 * scale_y, text)
 
+    
     #######################
     # indifference curves #
     #######################
@@ -550,19 +567,21 @@ class ConsumerClass:
             or numerical
         ):
             x1, x2 = self.find_indifference_curve_numerical(u0)
+
         elif self.indifference_curves_method == "perfect_complements":
+
             corner_x1 = u0 / self.alpha
             x1 = [corner_x1, corner_x1, self.x1max]
             corner_x2 = u0 / self.beta
             x2 = [self.x2max, corner_x2, corner_x2]
+
         else:
+
             x1, x2 = self.find_indifference_curve_analytical(u0)
 
         return x1, x2
 
-    def plot_indifference_curves(
-        self, ax, u0s=[], do_label=True, only_dots=False, numerical=False, **kwargs
-    ):
+    def plot_indifference_curves(self, ax, u0s=[], do_label=True, only_dots=False, numerical=False, **kwargs):
 
         kwargs.setdefault("lw", 2)
 
@@ -662,6 +681,7 @@ class ConsumerClass:
         x2 = 0.05 * x2_low + 0.95 * x2_high
         ax.text(x1, x2 * 1.05, text)
 
+    
     ##############################
     # price change decomposition #
     ##############################
@@ -799,7 +819,6 @@ class ConsumerClass:
 # interactive figures #
 #######################
 
-
 def _interactive_budgetset_exogenous(p1, p2, I, par):
 
     consumer = ConsumerClass(
@@ -815,7 +834,6 @@ def _interactive_budgetset_exogenous(p1, p2, I, par):
     consumer.plot_budgetline(ax, color="black")
     consumer.plot_budgetset(ax)
     consumer.plot_budgetline_slope(ax)
-
 
 def _interactive_budgetset_endogenous(p1, p2, e1, e2, par):
 
@@ -834,7 +852,6 @@ def _interactive_budgetset_endogenous(p1, p2, e1, e2, par):
     consumer.plot_budgetset(ax)
     consumer.plot_budgetline_slope(ax)
     consumer.plot_endowment(ax)
-
 
 def _interactive_budgetset_kink(p1, kink_point, kink_slope, p2, I, par):
 
@@ -865,7 +882,6 @@ def _interactive_budgetset_kink(p1, kink_point, kink_slope, p2, I, par):
 
     consumer.plot_budgetline(ax)
     consumer.plot_budgetset(ax)
-
 
 def interactive_budgetset(budgetsettype, **kwargs):
 
@@ -928,7 +944,6 @@ def interactive_budgetset(budgetsettype, **kwargs):
             ),
             par=widgets.fixed(kwargs),
         )
-
 
 def interactive_utility_settings(preferences, kwargs):
 
@@ -1006,7 +1021,6 @@ def interactive_utility_settings(preferences, kwargs):
     kwargs.setdefault("e2_max", 5)
     kwargs.setdefault("e2_step", 0.05)
 
-
 def _interactive_indifference_curves(alpha, beta, par):
 
     par["alpha"] = alpha
@@ -1037,7 +1051,6 @@ def _interactive_indifference_curves(alpha, beta, par):
     if par["show_convexity_check"]:
         consumer.plot_convexity_check(ax, u=us[1])
 
-
 def interactive_indifference_curves(preferences="cobb_douglas", **kwargs):
 
     interactive_utility_settings(preferences, kwargs)
@@ -1060,7 +1073,6 @@ def interactive_indifference_curves(preferences="cobb_douglas", **kwargs):
         ),
         par=widgets.fixed(kwargs),
     )
-
 
 def _interactive_utility_max(p1, p2, I, alpha, beta, gamma, par):
 
@@ -1095,7 +1107,6 @@ def _interactive_utility_max(p1, p2, I, alpha, beta, gamma, par):
     consumer.plot_indifference_curves(ax, u_alt, ls="--")
 
     consumer.plot_budgetline(ax)
-
 
 def interactive_utility_max(preferences="cobb_douglas", **kwargs):
 
@@ -1144,7 +1155,6 @@ def interactive_utility_max(preferences="cobb_douglas", **kwargs):
         par=widgets.fixed(kwargs),
     )
 
-
 def _interactive_slutsky_exogenous(par, steps, p1_old, p1_new, alpha, beta):
 
     par["alpha"] = alpha
@@ -1155,7 +1165,6 @@ def _interactive_slutsky_exogenous(par, steps, p1_old, p1_new, alpha, beta):
 
     p2 = 1
     consumer.plot_decomposition_exogenous(ax, p1_old, p1_new, p2, steps=steps)
-
 
 def interactive_slutsky_exogenous(preferences="cobb_douglas", **kwargs):
 
@@ -1195,7 +1204,6 @@ def interactive_slutsky_exogenous(preferences="cobb_douglas", **kwargs):
         ),
     )
 
-
 def _interactive_slutsky_endogenous(par, steps, p1_old, p1_new, e1, e2, alpha, beta):
 
     par["alpha"] = alpha
@@ -1206,7 +1214,6 @@ def _interactive_slutsky_endogenous(par, steps, p1_old, p1_new, e1, e2, alpha, b
 
     p2 = 1
     consumer.plot_decomposition_endogenous(ax, p1_old, p1_new, p2, e1, e2, steps=steps)
-
 
 def interactive_slutsky_endogenous(preferences="cobb_douglas", **kwargs):
 

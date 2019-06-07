@@ -8,12 +8,9 @@ from scipy import interpolate
 from types import SimpleNamespace
 
 import matplotlib.pyplot as plt
-import seaborn as sns
-
-sns.set_style("whitegrid")
+plt.style.use('seaborn-whitegrid')
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
-
 
 class AiyagariModel:
 
@@ -130,7 +127,8 @@ class AiyagariModel:
         # d. misc
         self.c_transition_path = np.empty((1, 1, 1))  # raw allocate
 
-    ######################
+    #
+    # #####################
     # 2. model functions #
     ######################
 
@@ -144,6 +142,7 @@ class AiyagariModel:
         k = self.f_prime_inv(R - 1 + self.delta)
         return self.w_func(k)
 
+    
     ############
     # 3. solve #
     ############
@@ -376,6 +375,7 @@ class AiyagariModel:
 
         print(f"steady state R = {self.R_ss:.5f} with k = {self.k_ss:.2f}")
 
+    
     ######################
     # 5. transition path #
     ######################

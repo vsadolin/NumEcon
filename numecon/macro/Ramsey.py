@@ -4,13 +4,10 @@ import numpy as np
 from scipy import optimize
 
 import matplotlib.pyplot as plt
-import seaborn as sns
-
-sns.set_style("whitegrid")
+plt.style.use('seaborn-whitegrid')
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
 import ipywidgets as widgets
-
 
 class RamseyModel:
 
@@ -91,6 +88,7 @@ class RamseyModel:
         else:
             raise ValueError("unknown production function")
 
+    
     ######################
     # 2. model functions #
     ######################
@@ -133,6 +131,7 @@ class RamseyModel:
 
         return np.sqrt((k - self.k_ss) ** 2 + (c - self.c_ss) ** 2)
 
+    
     ############
     # 3. solve #
     ############
@@ -245,6 +244,7 @@ class RamseyModel:
         self.k_loci["x"] = np.linspace(0, self.k_max, self.Nk)
         self.k_loci["y"] = self.c_func(self.k_loci["x"], self.k_loci["x"])
 
+    
     ###############
     # 4. simulate #
     ###############
@@ -332,6 +332,7 @@ class RamseyModel:
         c0 = wealth_sum / c_sum_rel
         return c0
 
+    
     ###########
     # 5. plot #
     ###########
@@ -366,7 +367,6 @@ class RamseyModel:
 #####################
 # interactive plots #
 #####################
-
 
 def interactive_phase_diagram():
 
@@ -413,7 +413,6 @@ def interactive_phase_diagram():
             continuous_update=False,
         ),
     )
-
 
 def phase_diagram(beta, sigma, delta, alpha, k0):
 

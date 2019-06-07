@@ -4,7 +4,7 @@ import numpy as np
 from types import SimpleNamespace
 
 import matplotlib.pyplot as plt
-
+plt.style.use('seaborn-whitegrid')
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
 import ipywidgets as widgets
@@ -13,46 +13,37 @@ import ipywidgets as widgets
 # functions #
 #############
 
-
 def f(l, k, par):
     return par.alpha / (1 + np.exp(-(l - par.beta)) + np.exp(-(k - par.gamma)))
-
 
 def fmin(kbar, par):
     return par.alpha / (1 + np.exp(-(0 - par.beta)) + np.exp(-(kbar - par.gamma)))
 
-
 def fmax(kbar, par):
     return par.alpha / (1 + np.exp(-(kbar - par.gamma)))
-
 
 def C(x, w, r, par):
     Cw = w * (par.beta - np.log(w * (par.alpha - x) / (x * (w + r))))
     Cr = r * (par.gamma - np.log(r * (par.alpha - x) / (x * (w + r))))
     return Cw + Cr
 
-
 def MC(x, w, r, par):
     return par.alpha * (w + r) / (x * (par.alpha - x))
-
 
 def C_SR(x, w, kbar, par):
     kbar_fac = 1 + np.exp(-(kbar - par.gamma))
     return w * par.beta - w * np.log((par.alpha - kbar_fac * x) / x)
-
 
 def MC_SR(x, w, kbar, par):
     kbar_fac = 1 + np.exp(-(kbar - par.gamma))
     denom = (par.alpha - kbar_fac * x) * x
     return w * par.alpha / denom
 
-
 def supply(p, w, r, par):
     b = w + r
     nom = np.sqrt(par.alpha) * np.sqrt(par.alpha * p - 4 * b)
     denom = 2 * np.sqrt(p)
     return nom / denom + par.alpha / 2
-
 
 def supply_SR(p, w, r, kbar, par):
     b = 1 + np.exp(-(kbar - par.gamma))
@@ -62,11 +53,9 @@ def supply_SR(p, w, r, kbar, par):
     denom = 2 * b
     return nom / denom
 
-
 def pmin(w, r, par):
     b = w + r
     return 4 * b / par.alpha
-
 
 def pmin_SR(w, r, kbar, par):
     b = 1 + np.exp(-(kbar - par.gamma))
@@ -76,7 +65,6 @@ def pmin_SR(w, r, kbar, par):
 #########
 # total #
 #########
-
 
 def _cost_figure(par, w, r, kbar):
 
@@ -106,7 +94,6 @@ def _cost_figure(par, w, r, kbar):
     frame = legend.get_frame()
     frame.set_facecolor("0.90")
 
-
 def cost_figure():
 
     par = SimpleNamespace()
@@ -128,7 +115,6 @@ def cost_figure():
 ###########
 # average #
 ###########
-
 
 def _avg_cost_figure(par, w, r, kbar):
 
@@ -162,7 +148,6 @@ def _avg_cost_figure(par, w, r, kbar):
     frame = legend.get_frame()
     frame.set_facecolor("0.90")
 
-
 def avg_cost_figure():
 
     par = SimpleNamespace()
@@ -184,7 +169,6 @@ def avg_cost_figure():
 #############
 # marginal  #
 #############
-
 
 def _MC_figure(par, w, r, kbar):
 
@@ -213,7 +197,6 @@ def _MC_figure(par, w, r, kbar):
     frame = legend.get_frame()
     frame.set_facecolor("0.90")
 
-
 def MC_figure():
 
     par = SimpleNamespace()
@@ -235,7 +218,6 @@ def MC_figure():
 ##########
 # supply #
 ##########
-
 
 def _supply_figure(par, pin, w, r, kbar):
 
@@ -343,7 +325,6 @@ def _supply_figure(par, pin, w, r, kbar):
     legend = ax.legend(loc="upper left", shadow=True)
     frame = legend.get_frame()
     frame.set_facecolor("0.90")
-
 
 def supply_figure():
 

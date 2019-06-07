@@ -3,7 +3,7 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
-
+plt.style.use('seaborn-whitegrid')
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
 import ipywidgets as widgets
@@ -11,8 +11,8 @@ import ipywidgets as widgets
 from .consumption import ConsumerClass
 from .firm import FirmClass1D
 
-
 class KoopmanModel:
+
     def __init__(self, consumer, firm, L=24, e=0, w=1, **kwargs):
 
         # a. baseline setup
@@ -40,6 +40,7 @@ class KoopmanModel:
         for key, val in kwargs.items():
             setattr(self, key, val)
 
+    
     ##########
     # figure #
     ##########
@@ -103,11 +104,9 @@ class KoopmanModel:
 
         return fig,ax
 
-
 ###############
 # interactive #
 ###############
-
 
 def _interactive_walras(alpha, beta, gamma, A, w, par):
 
@@ -125,7 +124,6 @@ def _interactive_walras(alpha, beta, gamma, A, w, par):
     # c. model
     model = KoopmanModel(consumer, firm, w=w, **par)
     model.walras_figure()
-
 
 def interactive_walras(**kwargs):
 

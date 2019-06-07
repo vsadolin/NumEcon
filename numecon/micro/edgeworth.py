@@ -3,15 +3,15 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
-
+plt.style.use('seaborn-whitegrid')
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
 import ipywidgets as widgets
 
 from .consumption import ConsumerClass
 
-
 class EdgeworthModel:
+
     def __init__(self, consumer_A, consumer_B, eA=[1, 1], eB=[1, 1], **kwargs):
 
         # a. baseline setup
@@ -53,6 +53,7 @@ class EdgeworthModel:
             x2max=self.e2bar,
         )
 
+    
     ##########
     # figure #
     ##########
@@ -150,7 +151,6 @@ class EdgeworthModel:
         )
         self.consumer_B.plot_indifference_curves(ax_B, color=colors[1], ls="--", lw=1)
 
-
 def interactive_settings(preferences_A, preferences_B, kwargs):
 
     # a. special A
@@ -211,7 +211,6 @@ def interactive_settings(preferences_A, preferences_B, kwargs):
     kwargs.setdefault("omega_1", 0.80)
     kwargs.setdefault("omega_2", 0.20)
 
-
 def _interactive_walras(p1, omega_1, omega_2, alpha_A, beta_A, alpha_B, beta_B, par):
 
     consumer_A = {}
@@ -234,10 +233,7 @@ def _interactive_walras(p1, omega_1, omega_2, alpha_A, beta_A, alpha_B, beta_B, 
     )
     model.walras_figure(xAs=[])
 
-
-def interactive_walras(
-    preferences_A="cobb_douglas", preferences_B="cobb_douglas", **kwargs
-):
+def interactive_walras(preferences_A="cobb_douglas", preferences_B="cobb_douglas", **kwargs):
 
     interactive_settings(preferences_A, preferences_B, kwargs)
 
