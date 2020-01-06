@@ -83,8 +83,8 @@ def _cost_figure(par, w, r, kbar):
     y = C_SR(x, w, kbar, par)
     x = np.append(x, x[-1])
     y = np.append(y, ymax)
-    ax.plot(x, y, ls="--", color=colors[0], lw=2, label="$C_{\\bar{k}}$")
-    ax.plot(x, y + r * kbar, ls="-", color=colors[0], lw=2, label="$TE_{\\bar{k}}$")
+    ax.plot(x, y, ls="--", color=colors[0], lw=2, label="$C^{SR}$")
+    ax.plot(x, y + r * kbar, ls="-", color=colors[0], lw=2, label="$TE^{SR}$")
 
     # layout
     ax.set_xlim([0, par.alpha])
@@ -133,12 +133,12 @@ def _avg_cost_figure(par, w, r, kbar):
     y = C_SR(x, w, kbar, par) / x
     x = np.append(x, x[-1])
     y = np.append(y, ymax)
-    ax.plot(x, y, ls="--", color=colors[0], lw=2, label="$AC_{\\bar{k}}$")
+    ax.plot(x, y, ls="--", color=colors[0], lw=2, label="$AC^{SR}$")
 
     y = (C_SR(x, w, kbar, par) + r * kbar) / x
     x = np.append(x, x[-1])
     y = np.append(y, ymax)
-    ax.plot(x, y, ls="-", color=colors[0], lw=2, label="$AE_{\\bar{k}}$")
+    ax.plot(x, y, ls="-", color=colors[0], lw=2, label="$AE^{SR}$")
 
     # layout
     ax.set_xlim([0, par.alpha])

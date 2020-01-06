@@ -194,8 +194,8 @@ class ConsumerClass:
         fig = plt.figure(frameon=False, figsize=(6, 6), dpi=100)
         ax = fig.add_subplot(1, 1, 1)
 
-        ax.set_xlim([0, self.x1max])
-        ax.set_ylim([0, self.x2max])
+        ax.set_xlim([-0.1, self.x1max])
+        ax.set_ylim([-0.1, self.x2max])
         ax.set_xlabel(self.x1_label)
         ax.set_ylabel(self.x2_label)
 
@@ -1026,7 +1026,7 @@ def _interactive_indifference_curves(alpha, beta, par):
     par["alpha"] = alpha
     par["beta"] = beta
     consumer = ConsumerClass(**par)
-    _fig, ax = consumer.figure()
+    fig, ax = consumer.figure()
 
     # 45 degrees
     ax.plot(
@@ -1051,6 +1051,15 @@ def _interactive_indifference_curves(alpha, beta, par):
     if par["show_convexity_check"]:
         consumer.plot_convexity_check(ax, u=us[1])
 
+    return fig
+
+def interactive_indifference_curves_save(preferences="cobb_douglas", **kwargs):
+
+    interactive_utility_settings(preferences, kwargs)
+    fig = _interactive_indifference_curves(kwargs["alpha"],kwargs["beta"],kwargs)
+    fig.savefig(f'figs/{preferences}.pdf')
+    plt.close(fig)
+    
 def interactive_indifference_curves(preferences="cobb_douglas", **kwargs):
 
     interactive_utility_settings(preferences, kwargs)
