@@ -225,7 +225,7 @@ class AiyagariModel:
             m = np.insert(m,0,0)  # add 0 in beginning
             c = np.insert(c,0,0)  # add 0 in beginning
 
-            # c. interpolate to common grid
+            # c. construct interpolator
             c_raw_func = interpolate.RegularGridInterpolator([m],c,method="linear",bounds_error=False,fill_value=None)
 
             # d. construct interpolator at common grid
@@ -250,22 +250,16 @@ class AiyagariModel:
         for t in reversed(range(self.transT)):
 
             # i. solve
-            if t == self.transT - 1:
+            if t == self.transT-1:
                 c_plus_func = self.c_func_inf
-                self.c_func_transition_path[t] = self.solve_step(
-                    c_plus_func, self.R_ss, self.w_ss
-                )
+                self.c_func_transition_path[t] = self.solve_step(c_plus_func,self.R_ss,self.w_ss)
             else:
-                c_plus_func = self.c_func_transition_path[t + 1]
-                self.c_func_transition_path[t] = self.solve_step(
-                    c_plus_func, self.sim_R[t + 1], self.sim_w[t + 1]
-                )
+                c_plus_func = self.c_func_transition_path[t+1]
+                self.c_func_transition_path[t] = self.solve_step(c_plus_func,self.sim_R[t+1],self.sim_w[t+1])
 
             # ii. save values
             for z in range(self.Nz):
-                self.c_transition_path[t, z, :] = self.c_func_transition_path[t][
-                    z
-                ].values
+                self.c_transition_path[t,z,:] = self.c_func_transition_path[t][z].values
 
     #############################
     # 4. stationary equilibrium #
@@ -335,8 +329,8 @@ class AiyagariModel:
             self.check_supply_and_demand,
             self.R_low,
             self.R_high,
-            args=(a0, z0, print_results),
-            xtol=self.ss_R_tol * 100,
+            args=(a0,z0,print_results),
+            xtol=self.ss_R_tol*100,
         )
         self.check_supply_and_demand(self.R_ss,a0,z0)
 
@@ -354,10 +348,10 @@ class AiyagariModel:
             self.check_supply_and_demand,
             self.R_low,
             self.R_high,
-            args=(a0, z0, print_results),
+            args=(a0,z0,print_results),
             xtol=self.ss_R_tol,
         )
-        self.check_supply_and_demand(self.R_ss, a0, z0)
+        self.check_supply_and_demand(self.R_ss,a0,z0)
 
         print(f"steady state R = {self.R_ss:.5f} with k = {self.k_ss:.2f}")
 
@@ -374,7 +368,7 @@ class AiyagariModel:
         for t in range(self.transT):
             if t == 0:
                 self.sim_R[0] = self.R_func(np.mean(self.trans_sim_a0))
-            elif t < self.transT / 2:
+            elif t < self.transT/2:
                 self.sim_R[t] = self.sim_R[t-1] + mu*(self.R_ss-self.sim_R[t-1])
             else:
                 self.sim_R[t] = self.R_ss
@@ -415,7 +409,6 @@ class AiyagariModel:
             # v. done or update
             max_diff = np.amax(np.abs(R_new-R_old))
             if max_diff < self.trans_tol or count >= self.trans_maxiter:  # done
-                # raise Exception('transition path has not converged')
                 break
             else:  # update
                 self.sim_R = 0.9*R_old + 0.1*R_new
@@ -492,7 +485,7 @@ def simulate(
                 y = sim_w[t]*(grid_z[sim_z[i]]-unemp_p*unemp_b) / (1-unemp_p)
 
             # d. cash-on-hand
-            m = sim_R[t] * a_lag + y
+            m = sim_R[t]*a_lag + y
 
             # e. consumption
             if m <= grid_m[-1]:
