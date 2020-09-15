@@ -149,6 +149,36 @@ class ConsumerClass:
             )
             self.cost_min_method = "numerical"
 
+        elif self.preferences == "stone_geary":
+
+            self.utility_func = lambda x1, x2, alpha, beta: x1 ** alpha * (x2 + beta)
+            self.indiff_func_x1 = lambda u0, x1, alpha, beta: u0 / x1 ** alpha - beta
+            self.indiff_func_x2 = lambda u0, x2, alpha, beta: (u0 / (x2 + beta)) ** (
+                1 / alpha
+            )
+            self.utility_max_method = "numerical"
+            self.cost_min_method = "numerical"
+
+        elif self.preferences == "time_log":
+
+            self.utility_func = lambda x1, x2, alpha, beta: np.log(x1) + beta*np.log(x2)
+            self.indiff_func_x1 = lambda u0, x1, alpha, beta: np.exp((u0 - np.log(x1))/beta)
+            self.indiff_func_x2 = lambda u0, x2, alpha, beta: np.exp((u0 - beta*np.log(x2)))
+
+            self.indifference_curves_method = "numerical"
+            self.utility_max_method = "numerical"
+            self.cost_min_method = "numerical"
+
+        elif self.preferences == "time_crra":
+
+            self.utility_func = lambda x1, x2, alpha, beta: x1**(1-alpha)/(1-alpha) + beta*x2**(1-alpha)/(1-alpha)
+            self.indiff_func_x1 = lambda u0, x1, alpha, beta: (((1-alpha)*u0-x1**(1-alpha))/beta)**(1/(1-alpha))
+            self.indiff_func_x2 = lambda u0, x2, alpha, beta: ((1-alpha)*u0-beta*x2**(1-alpha))**(1/(1-alpha))
+
+            self.indifference_curves_method = "numerical"
+            self.utility_max_method = "numerical"
+            self.cost_min_method = "numerical"
+
         elif self.preferences == "concave":
 
             self.utility_func = (
@@ -160,16 +190,6 @@ class ConsumerClass:
             self.indiff_func_x2 = lambda u0, x2, alpha, beta: np.sqrt(
                 (u0 - beta * x2 ** 2) / alpha
             )
-            self.cost_min_method = "numerical"
-
-        elif self.preferences == "quasi_quasi":
-
-            self.utility_func = lambda x1, x2, alpha, beta: x1 ** alpha * (x2 + beta)
-            self.indiff_func_x1 = lambda u0, x1, alpha, beta: u0 / x1 ** alpha - beta
-            self.indiff_func_x2 = lambda u0, x2, alpha, beta: (u0 / (x2 + beta)) ** (
-                1 / alpha
-            )
-            self.utility_max_method = "numerical"
             self.cost_min_method = "numerical"
 
         elif self.preferences == "saturated":
@@ -493,10 +513,10 @@ class ConsumerClass:
                 return udiff
 
             x_A, _infodict_A, ier_A, _mesg_A = optimize.fsolve(
-                target_for_x2, 0, full_output=True
+                target_for_x2, 1e-8, full_output=True
             )
             x_B, _infodict_B, ier_B, _mesg_B = optimize.fsolve(
-                target_for_x2, self.x2max, full_output=True
+                target_for_x2, self.x2max-1e-8, full_output=True
             )
 
             if ier_A == 1:
@@ -970,6 +990,15 @@ def interactive_utility_settings(preferences, kwargs):
         kwargs.setdefault("beta_min", 0.0)
         kwargs.setdefault("beta_max", 8)
 
+    elif preferences == "time_log":
+
+        kwargs.setdefault("beta", 0.50)
+
+    elif preferences == "time_crra":
+
+        kwargs.setdefault("alpha", 2.00)
+        kwargs.setdefault("beta", 0.50)
+
     # b. standard
     kwargs["preferences"] = preferences
 
@@ -1026,7 +1055,7 @@ def _interactive_indifference_curves(alpha, beta, par):
     par["alpha"] = alpha
     par["beta"] = beta
     consumer = ConsumerClass(**par)
-    fig, ax = consumer.figure()
+    _fig, ax = consumer.figure()
 
     # 45 degrees
     ax.plot(
@@ -1051,8 +1080,6 @@ def _interactive_indifference_curves(alpha, beta, par):
     if par["show_convexity_check"]:
         consumer.plot_convexity_check(ax, u=us[1])
 
-    return fig
-
 def interactive_indifference_curves_save(preferences="cobb_douglas", **kwargs):
 
     interactive_utility_settings(preferences, kwargs)
@@ -1064,6 +1091,8 @@ def interactive_indifference_curves(preferences="cobb_douglas", **kwargs):
 
     interactive_utility_settings(preferences, kwargs)
 
+    _interactive_indifference_curves
+    
     widgets.interact(
         _interactive_indifference_curves,
         alpha=widgets.FloatSlider(
