@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-import distutils
 import os
 import setuptools
+import distutils 
 import shlex
 import shutil
 import subprocess
